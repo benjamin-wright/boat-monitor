@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <script>
+      function refresh() {
+        fetch("/pins")
+          .then(res => res.json())
+          .then(data => {
+            console.log(data);
+          });
+      }
+
+      setInterval(refresh, 5000);
+    </script>
+    <style>
+      :root {
+        --primary-color: #003135;
+        --secondary-color: #0FA4AF;
+        --highlight-color: #964734;
+        --background-color: #AFDDE5;
+
+        --level-good: #30b455;
+        --level-warning: #f0b840;
+        --level-danger: #f04040;
+      }
+
+      body {
+        background-color: var(--background-color);
+        font-family: Arial, sans-serif;
+        color: var(--primary-color);
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: max-content;
+        height: fit-content;
+      }
+
+      header {
+        margin: 0.3em;
+        border-bottom: 2px solid var(--highlight-color);
+        grid-column: 1 / span 2;
+      }
+      
+      h1 {
+        color: var(--highlight-color);
+        margin: 0.7em 0.2em;
+      }
+
+      section {
+        padding: 10px;
+      }
+      
+      .battery {
+        border: 3px solid #333;
+        width: 18px;
+        height: 28px;
+        padding: 2px;
+        border-radius: 4px;
+        position: relative;
+        margin: 15px 0;
+      }
+
+      .battery:before {
+        content: '';
+        height: 3px;
+        width: 18px;
+        background: #333;
+        display: block;
+        position: absolute;
+        top: -6px;
+        border-radius: 4px 4px 0 0;
+      }
+
+      .battery:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        bottom: -1px;
+        border: 1px solid #fff;
+        border-radius: 2px;
+      }
+
+      .level {
+        background: var(--level-good); 
+        position: absolute;
+        bottom: 0px;
+        left: 0;
+        right: 0;
+      }
+
+      .bilge {
+        border: 3px solid #333;
+        width: 18px;
+        height: 28px;
+        padding: 2px;
+        border-radius: 4px;
+        position: relative;
+        margin: 15px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Boat Monitor</h1>
+    </header>
+    <section>
+      <h2>Levels</h2>
+      <div>
+        <div class="battery">
+          <div class="level" style="height: 83%;"></div>
+        </div>
+        <p><em>12.7</em>V</p>
+      </div>
+      <div>
+        <div class="bilge">
+          <div class="level" style="height: 13%;"></div>
+        </div>
+        <p><em>13%</em></p>
+      </div>
+    </section>
+    <section>
+      <h2>WebCam</h2>
+      <button>Restart</button>
+    </section>
+  </body>
+</html>
