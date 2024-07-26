@@ -1,26 +1,87 @@
 <html>
   <head>
     <script>
+      const minVoltage = 10;
+      const maxVoltage = 15.5;
+      const warnVoltage = 11.5;
+      const dangerVoltage = 10.5;
+
+      const warnBilge = 0.5;
+      const dangerBilge = 0.8;
+
+      function resetCamera() {
+        console.log("Resetting camera");
+      }
+
+      function normalise(value, min, max) {
+        const normalised = (value - min) / (max - min);
+        return Math.min(1, Math.max(0, normalised));
+      }
+
+      function setBattery(voltage) {
+        document.getElementById("voltage-data").innerText = voltage.toFixed(2);
+        document.getElementById("voltage-svg").style.height = `${normalise(voltage, minVoltage, maxVoltage) * 100}%`;
+        
+        const battery = document.getElementById("battery");
+
+        if (voltage < dangerVoltage) {
+          battery.classList.remove("warning");
+          battery.classList.add("danger");
+        } else if (voltage < warnVoltage) {
+          battery.classList.add("warning");
+          battery.classList.remove("danger");
+        } else {
+          battery.classList.remove("warning");
+          battery.classList.remove("danger");
+        }
+      }
+
+      function setBilge(level) {
+        document.getElementById("bilge-data").innerText = (level * 100).toFixed(0);
+        document.getElementById("bilge-svg").style.height = `${level * 100}%`;
+
+        const bilge = document.getElementById("bilge");
+
+        if (level > dangerBilge) {
+          bilge.classList.add("danger");
+          bilge.classList.remove("warning");
+        } else if (level > warnBilge) {
+          bilge.classList.remove("danger");
+          bilge.classList.add("warning");
+        } else {
+          bilge.classList.remove("danger");
+          bilge.classList.remove("warning");
+        }
+      }
+
       function refresh() {
         fetch("/pins")
           .then(res => res.json())
           .then(data => {
-            console.log(data);
+            setBattery(data.battery);
+            setBilge(data.bilge);
           });
       }
 
-      setInterval(refresh, 5000);
+      setInterval(refresh, 2000);
+      refresh();
     </script>
     <style>
       :root {
         --primary-color: #003135;
         --secondary-color: #0FA4AF;
-        --highlight-color: #964734;
-        --background-color: #AFDDE5;
+        --highlight-color: #713627;
+        --background-color: #bee0e6;
+        --inactive-color: #aaaaaa;
+        --border-color: #333;
 
         --level-good: #30b455;
         --level-warning: #f0b840;
         --level-danger: #f04040;
+      }
+
+      html {
+        background-color: var(--border-color);
       }
 
       body {
@@ -28,7 +89,8 @@
         font-family: Arial, sans-serif;
         color: var(--primary-color);
         padding: 0;
-        margin: 0;
+        margin: 15px;
+        border-radius: 1em;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: max-content;
@@ -36,69 +98,149 @@
       }
 
       header {
-        margin: 0.3em;
-        border-bottom: 2px solid var(--highlight-color);
+        padding: 0.2em;
+        border-bottom: 2px solid var(--border-color);
         grid-column: 1 / span 2;
       }
       
       h1 {
         color: var(--highlight-color);
-        margin: 0.7em 0.2em;
+        margin: 0.4em;
       }
 
       section {
         padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        height: fit-content;
+        justify-content: space-around;
+      }
+
+      section h2 {
+        flex-basis: 100%;
+        text-align: center;
+      }
+
+      section > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       
       .battery {
-        border: 3px solid #333;
-        width: 18px;
-        height: 28px;
-        padding: 2px;
-        border-radius: 4px;
+        border: 0.2em solid var(--border-color);
+        width: 3em;
+        height: 4em;
+        padding: 0.1em;
+        border-radius: 0.3em;
         position: relative;
-        margin: 15px 0;
+        margin: 0;
       }
 
       .battery:before {
         content: '';
-        height: 3px;
-        width: 18px;
-        background: #333;
+        height: 0.3em;
+        width: 3em;
+        background: var(--border-color);
         display: block;
         position: absolute;
-        top: -6px;
-        border-radius: 4px 4px 0 0;
+        top: -0.4em;
+        border-radius: 0.4em 0.4em 0 0;
       }
 
       .battery:after {
         content: '';
         display: block;
         position: absolute;
-        top: -1px;
-        left: -1px;
-        right: -1px;
-        bottom: -1px;
-        border: 1px solid #fff;
-        border-radius: 2px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 0.15em solid var(--background-color);
+        border-radius: 0.2em;
       }
 
       .level {
-        background: var(--level-good); 
+        background: var(--level-good);
         position: absolute;
         bottom: 0px;
         left: 0;
         right: 0;
       }
 
+      .lightning, .water {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .water {
+        fill: none;
+        stroke: var(--primary-color);
+        stroke-width: 3px;
+      }
+
       .bilge {
-        border: 3px solid #333;
-        width: 18px;
-        height: 28px;
-        padding: 2px;
-        border-radius: 4px;
+        border: 0.2em solid var(--border-color);
+        width: 3em;
+        height: 4em;
+        padding: 0.1em;
+        border-radius: 0.3em;
         position: relative;
-        margin: 15px 0;
+        margin: 0;
+      }
+
+      .bilge:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 0.2em solid var(--background-color);
+        border-radius: 0.3em;
+      }
+
+      .warning .level {
+        background: var(--level-warning);
+      }
+
+      .danger svg {
+        fill: var(--level-danger);
+      }
+
+      .danger .level {
+        background: var(--level-danger);
+      }
+
+      button {
+        background-color: var(--border-color);
+        color: var(--background-color);
+        border: none;
+        border-radius: 0.5em;
+        padding: 0.5em;
+        margin: 0.5em;
+        cursor: pointer;
+        font-size: 1.5em;
+      }
+
+      button:hover {
+        background-color: var(--highlight-color);
+        color: var(--background-color);
+      }
+
+      button:active {
+        box-shadow: 0 0 0.3em 0 var(--border-color);
+      }
+
+      button:disabled {
+        background-color: var(--inactive-color);
+        color: var(--background-color);
+        pointer-events: none;
       }
     </style>
   </head>
@@ -109,21 +251,29 @@
     <section>
       <h2>Levels</h2>
       <div>
-        <div class="battery">
-          <div class="level" style="height: 83%;"></div>
+        <div id="battery" class="battery">
+          <div id="voltage-svg" class="level" style="height: 83%;">
+          </div>
+          <svg class="lightning" viewBox="0 0 32 32">
+            <path d="M23.5 13.187h-7.5v-12.187l-7.5 17.813h7.5v12.187l7.5-17.813z"/>
+          </svg>
         </div>
-        <p><em>12.7</em>V</p>
+        <p><em id="voltage-data">12.7</em>V</p>
       </div>
       <div>
-        <div class="bilge">
-          <div class="level" style="height: 13%;"></div>
+        <div id="bilge" class="bilge">
+          <div id="bilge-svg" class="level" style="height: 13%;">
+          </div>
+          <svg class="water" viewBox="0 0 37.607 37.607">
+            <path d="M31.833,24.579c0,7.187-5.846,13.028-13.029,13.028S5.775,31.764,5.775,24.579c0-6.237,9.105-20.617,10.932-23.437 C17.167,0.43,17.957,0,18.806,0s1.638,0.43,2.099,1.142C22.728,3.962,31.833,18.342,31.833,24.579z"></path>
+          </svg>
         </div>
-        <p><em>13%</em></p>
+        <p><em id="bilge-data">13</em>%</p>
       </div>
     </section>
     <section>
       <h2>WebCam</h2>
-      <button>Restart</button>
+      <button onclick="resetCamera()">Restart</button>
     </section>
   </body>
 </html>

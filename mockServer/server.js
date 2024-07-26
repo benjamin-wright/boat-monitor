@@ -14,7 +14,7 @@ app.get('/index.html', (req, res) => {
 
 app.get('/pins', (req, res) => {
   res.json({
-    battery: Math.random() * 4 + 10,
+    battery: Math.random() * 5.5 + 10,
     bilge: Math.random(),
   });
 });
