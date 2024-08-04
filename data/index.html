@@ -93,8 +93,9 @@
         border-radius: 1em;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: max-content;
+        grid-auto-rows: max-content;
         height: fit-content;
+        font-size: 2em;
       }
 
       header {
@@ -108,12 +109,23 @@
         margin: 0.4em;
       }
 
+      em {
+        font-style: normal;
+        font-weight: bold;
+      }
+
       section {
         padding: 10px;
         display: flex;
         flex-wrap: wrap;
         height: fit-content;
         justify-content: space-around;
+      }
+
+      @media (orientation: portrait) {
+        section {
+          grid-column: 1 / span 2;
+        }
       }
 
       section h2 {
@@ -127,7 +139,7 @@
         align-items: center;
       }
       
-      .battery {
+      .battery, .bilge {
         border: 0.2em solid var(--border-color);
         width: 3em;
         height: 4em;
@@ -135,6 +147,8 @@
         border-radius: 0.3em;
         position: relative;
         margin: 0;
+        display: flex;
+        flex-direction: column-reverse;
       }
 
       .battery:before {
@@ -148,24 +162,12 @@
         border-radius: 0.4em 0.4em 0 0;
       }
 
-      .battery:after {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border: 0.15em solid var(--background-color);
-        border-radius: 0.2em;
-      }
-
       .level {
         background: var(--level-good);
-        position: absolute;
         bottom: 0px;
         left: 0;
         right: 0;
+        border-radius: 0.1em;
       }
 
       .lightning, .water {
@@ -183,33 +185,11 @@
         stroke-width: 3px;
       }
 
-      .bilge {
-        border: 0.2em solid var(--border-color);
-        width: 3em;
-        height: 4em;
-        padding: 0.1em;
-        border-radius: 0.3em;
-        position: relative;
-        margin: 0;
-      }
-
-      .bilge:after {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border: 0.2em solid var(--background-color);
-        border-radius: 0.3em;
-      }
-
       .warning .level {
         background: var(--level-warning);
       }
 
-      .danger svg {
+      .danger .lightning {
         fill: var(--level-danger);
       }
 
