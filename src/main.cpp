@@ -12,31 +12,6 @@ MiniServer* serv;
 
 #define FORMAT_LITTLEFS_IF_FAILED true
 
-void readIndex() {
-  File dir = LittleFS.open("/", "r");
-  if (!dir) {
-    Serial.println("Failed to open file for reading");
-    return;
-  }
-
-  if(!dir.isDirectory()){
-    Serial.println(" - file is not a directory");
-    dir.close();
-    return;
-  }
-
-  Serial.println("Contents:");
-  File file = dir.openNextFile();
-  while(file){
-    Serial.print("  ");
-    Serial.println(file.name());
-    file.close();
-    file = dir.openNextFile();
-  }
-
-  dir.close();
-}
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -47,8 +22,6 @@ void setup() {
   if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)) {
     delay(1000);
     Serial.println("LittleFS Mount Failed");
-  } else {
-    readIndex();
   }
 
 

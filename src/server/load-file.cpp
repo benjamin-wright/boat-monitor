@@ -18,8 +18,6 @@ String FileLoader::readFile(const char* file) {
 
     buffer = (uint8_t*)malloc(length);
     size_t read = f.read(buffer, length);
-    Serial.printf("Read %d bytes\n", read);
-    Serial.println((char*)buffer);
     f.close();
 
     String content = String(buffer, length);
