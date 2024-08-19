@@ -2,6 +2,7 @@
 #include <WiFi.h>
 
 #include "../../include/boat-monitor/server.h"
+#include "../../include/boat-monitor/utils.h"
 #include "pins.h"
 
 RouteParams pinsRouteParams = {
@@ -13,10 +14,12 @@ RouteParams pinsRouteParams = {
 void PinsRoute::handle(Connection *connection, Request req) {
   Response res = {};
 
+  PinInputs inputs = pins::read();
+
   res.status = 200;
   res.message = "OK";
   res.type = ResponseType::json;
-  res.content = "{\"battery\":" + String(0.25) + ",\"bilge\":" + String(0.8) + "}";
+  res.content = "{\"battery\":" + String(inputs.battery) + ",\"bilge\":" + String(inputs.bilge) + ",\"resetting\":" + (pins::isResetting() ? "true" : "false") + "}";
 
   connection->Write(req, res);
 }

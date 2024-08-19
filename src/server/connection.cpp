@@ -67,6 +67,7 @@ void Connection::readRest() {
   while (this->client.connected()) {
     if (this->client.available()) {
       char c = this->client.read();
+      Serial.print(c);
       if (c == '\n') {
         if (currentLine.length() == 0) {
           break;

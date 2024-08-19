@@ -9,8 +9,24 @@
       const warnBilge = 0.5;
       const dangerBilge = 0.8;
 
-      function resetCamera() {
+      function restartClicked() {
+        const response = prompt("Please enter the password to restart the camera");
+        if (response === null) {
+          return;
+        }
+
         console.log("Resetting camera");
+        fetch("/reset", { method: "PUT", body: JSON.stringify({ password: response })})
+          .then(res => {
+            if (res.ok) {
+              setResetButton(false);
+            } else {
+              console.error("Failed to reset camera: " + res.status + " - " + res.statusText);
+            }
+          })
+          .catch(err => {
+            console.error("Failed to reset camera: " + err);
+          });
       }
 
       function normalise(value, min, max) {
@@ -54,12 +70,17 @@
         }
       }
 
+      function setResetButton(enabled) {
+        document.getElementById("reset-button").disabled = !enabled;
+      }
+
       function refresh() {
         fetch("/pins")
           .then(res => res.json())
           .then(data => {
             setBattery(data.battery);
             setBilge(data.bilge);
+            setResetButton(!data.resetting);
           });
       }
 
@@ -253,7 +274,7 @@
     </section>
     <section>
       <h2>WebCam</h2>
-      <button onclick="resetCamera()">Restart</button>
+      <button id="reset-button" disabled onclick="restartClicked()">Restart</button>
     </section>
   </body>
 </html>
