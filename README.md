@@ -23,6 +23,18 @@
 
 ## PreReqs
 - PlatformIO extension
+- credentials.h file in src with:
+
+```cpp
+#ifndef CREDENTIALS_H
+#define CREDENTIALS_H
+
+const char* ssid = "";           // your network SSID (name)
+const char* password = "";       // your network password
+const char* reset_password = ""; // the password to cycle the camera power supply 
+
+#endif
+```
 
 ## To Build
 - `make gen`
