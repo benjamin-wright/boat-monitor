@@ -22,32 +22,24 @@ void pins::init() {
   pinMode(RELAY_PIN, OUTPUT);
   pinMode(BATTERY_PIN, INPUT);
   pinMode(BILGE_PIN, INPUT);
+
+  digitalWrite(RELAY_PIN, HIGH);
 }
 
 PinInputs pins::read() {
   int battery = abs(analogRead(BATTERY_PIN) - PIN_NEUTRAL);
   int bilge = abs(analogRead(BILGE_PIN) - PIN_NEUTRAL);
 
-  Serial.print("Battery: ");
-  Serial.println(battery);
-  Serial.print("Bilge: ");
-  Serial.println(bilge);
-
   PinInputs inputs = {
     BATTERY_MIN + battery * BATTERY_FACTOR,
     BILGE_MIN + bilge * BILGE_FACTOR
   };
 
-  Serial.print("Battery: ");
-  Serial.println(inputs.battery);
-  Serial.print("Bilge: ");
-  Serial.println(inputs.bilge);
-
   return inputs;
 }
 
 void pins::resetCameras() {
-  digitalWrite(RELAY_PIN, HIGH);
+  digitalWrite(RELAY_PIN, LOW);
   resetting = true;
   last_set = millis();
 }
@@ -58,7 +50,7 @@ bool pins::isResetting() {
 
 void pins::tick() {
   if (resetting && millis() - last_set > PULSE_LENGTH) {
-    digitalWrite(RELAY_PIN, LOW);
+    digitalWrite(RELAY_PIN, HIGH);
     resetting = false;
   }
 }

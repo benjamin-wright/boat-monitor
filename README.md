@@ -2,8 +2,8 @@
 
 ## ToDo
 
-- Update the client to accept a request body
-  - i.e. look for the `content-length` header, then decide whether to bail at the first newline or read extra beyond that
+- Show a connection outage symbol if there's an error hitting the pins endpoint
+- Test the digital out and the analog pins with the signal generator and multimeter
 
 ## Requirements
 
@@ -18,6 +18,8 @@
   - driven by Digital output 1
   - high (3.3V) by default
   - drops low (0V) when triggered and stays there for 30 seconds
+- Show error toast if there's an error hitting the reset endpoint
+- Show a connection symbol if the pins endpoint doesn't work
 
 ## PreReqs
 - PlatformIO extension

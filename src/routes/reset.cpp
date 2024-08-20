@@ -11,8 +11,22 @@ RouteParams resetRouteParams = {
   1
 };
 
+ResetRoute::ResetRoute(const char* password) {
+  this->password = password;
+}
+
 void ResetRoute::handle(Connection *connection, Request req) {
   Response res = {};
+
+  if (req.body != this->password) {
+    res.status = 401;
+    res.message = "Unauthorized";
+    res.type = ResponseType::json;
+    res.content = "{\"error\":\"Unauthorized\"}";
+
+    connection->Write(req, res);
+    return;
+  }
   
   if (pins::isResetting()) {
     res.status = 400;

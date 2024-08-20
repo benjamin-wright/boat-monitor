@@ -6,6 +6,7 @@ const unsigned long MAX_REQUEST_TIME = 2000;
 struct Request {
   String method;
   String path;
+  String body;
 
   // Return a pretty string version of the request
   String toString();
@@ -25,7 +26,7 @@ class Connection {
   private:
     WiFiClient client;
     String readLine();
-    void readRest();
+    String readRest();
 
   public:
     Connection(WiFiClient client);

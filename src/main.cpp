@@ -29,7 +29,7 @@ void setup() {
   Route** routes = new Route*[3];
   routes[0] = new IndexRoute();
   routes[1] = new PinsRoute();
-  routes[2] = new ResetRoute();
+  routes[2] = new ResetRoute(reset_password);
 
   Serial.println("Loaded");
   serv = new MiniServer(routes, 3);

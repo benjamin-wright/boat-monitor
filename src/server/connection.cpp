@@ -62,23 +62,42 @@ String Connection::readLine() {
   return line;
 }
 
-void Connection::readRest() {
-  String currentLine = "start";
-  while (this->client.connected()) {
-    if (this->client.available()) {
-      char c = this->client.read();
-      Serial.print(c);
-      if (c == '\n') {
-        if (currentLine.length() == 0) {
-          break;
-        } else {
-          currentLine = "";
-        }
-      } else if (c != '\r') {
-        currentLine += c;
-      }
+String Connection::readRest() {
+  int bodyLength = 0;
+  
+  while (true) {
+    String line = this->readLine();
+    
+    if (line.startsWith("Content-Length:")) {
+      bodyLength = line.substring(16).toInt();
+    }
+
+    if (line == "") {
+      break;
     }
   }
+
+  if (bodyLength == 0) {
+    return "";
+  }
+
+  String body = "";
+  unsigned long start = millis();
+  while (this->client.connected() && body.length() < bodyLength) {
+    if (this->client.available()) {
+      char c = this->client.read();
+      body += c;
+    }
+
+    unsigned long elapsed = millis() - start;
+
+    if (elapsed > MAX_REQUEST_TIME) {
+      Serial.println("Request timed out");
+      break;
+    }
+  }
+
+  return body;
 }
 
 Request Connection::Read() {
@@ -88,8 +107,7 @@ Request Connection::Read() {
   }
 
   Request req = Request::fromString(firstLine);
-  
-  this->readRest();
+  req.body = this->readRest();
 
   return req;
 }
