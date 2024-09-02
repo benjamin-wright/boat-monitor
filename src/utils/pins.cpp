@@ -6,8 +6,8 @@ const int BILGE_PIN = A1;
 const int RELAY_PIN = D3;
 const int PULSE_LENGTH = 30000;
 
-const int PIN_NEUTRAL = 2048;
-const int PIN_RANGE = 2048;
+const int PIN_NEUTRAL = 0;
+const int PIN_RANGE = 4096;
 const float BATTERY_MIN = 10.2;
 const float BATTERY_MAX = 15.5;
 const float BATTERY_FACTOR = (BATTERY_MAX - BATTERY_MIN) / PIN_RANGE;
@@ -27,8 +27,12 @@ void pins::init() {
 }
 
 PinInputs pins::read() {
-  int battery = abs(analogRead(BATTERY_PIN) - PIN_NEUTRAL);
-  int bilge = abs(analogRead(BILGE_PIN) - PIN_NEUTRAL);
+  int initialBattery = analogRead(BATTERY_PIN);
+  int initialBilge = analogRead(BILGE_PIN);
+
+  int battery = abs(initialBattery - PIN_NEUTRAL);
+  int bilge = abs(initialBilge - PIN_NEUTRAL);
+
 
   PinInputs inputs = {
     BATTERY_MIN + battery * BATTERY_FACTOR,
